@@ -10,7 +10,8 @@ fun main() {
 
     println("")
     println("The result:")
-    println(encodeToChuckNorris(input))
+//    println(encodeToChuckNorris(input))
+    println(decodeFromChuckNorris(input))
 }
 
 fun encodeToChuckNorris(input: String): String {
@@ -47,4 +48,29 @@ private fun encodeRun(bit: Char, count: Int): String {
     val bitMarker = if (bit == '0') "00" else "0"
     val repeatMarker = "0".repeat(count)
     return "$bitMarker $repeatMarker"
+}
+
+fun decodeFromChuckNorris(encoded: String): String {
+    if (encoded.isEmpty()) return ""
+
+    val parts = encoded.trim().split(Regex("\\s+"))
+    val binaryString = parts
+        .chunked(2)
+        .joinToString("") { (bitMarker, repeatMarker) ->
+            decodeRun(bitMarker, repeatMarker)
+        }
+
+    return binaryString
+        .chunked(7)
+        .map { binaryToChar(it) }
+        .joinToString("")
+}
+
+private fun decodeRun(bitMarker: String, repeatMarker: String): String {
+    val bit = if (bitMarker == "00") '0' else '1'
+    return bit.toString().repeat(repeatMarker.length)
+}
+
+private fun binaryToChar(binary: String): Char {
+    return Integer.parseInt(binary, 2).toChar()
 }
